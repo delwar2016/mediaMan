@@ -13,6 +13,8 @@ const clockwork = require('clockwork')({ key: process.env.CLOCKWORK_KEY });
 const paypal = require('paypal-rest-sdk');
 const lob = require('lob')(process.env.LOB_KEY);
 const ig = require('instagram-node').instagram();
+const dirTree = require('directory-tree');
+const paramFolderName = './public/fileStorage';
 const { Venues, Users } = require('node-foursquare')({
   secrets: {
     clientId: process.env.FOURSQUARE_ID,
@@ -642,3 +644,7 @@ exports.getGoogleMaps = (req, res) => {
     google_map_api_key: process.env.GOOGLE_MAP_API_KEY
   });
 };
+
+exports.getMediaStructures = (req, res) => {
+  return res.send([dirTree(paramFolderName)]);
+}

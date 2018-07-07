@@ -25,12 +25,13 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
-dotenv.load({ path: '.env.example' });
+dotenv.load({ path: '.env' });
 
 /**
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
+const directoryViewer = require('./controllers/directoryViewer');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
@@ -59,7 +60,7 @@ mongoose.connection.on('error', (err) => {
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(expressStatusMonitor());
@@ -130,6 +131,7 @@ app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
 app.get('/contact', contactController.getContact);
 app.post('/contact', contactController.postContact);
+app.get('/media', passportConfig.isAuthenticated, directoryViewer.directoryViewer);
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
@@ -168,6 +170,7 @@ app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
 app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
 app.get('/api/google-maps', apiController.getGoogleMaps);
+app.get('/api/fileStorage', passportConfig.isAuthenticated, apiController.getMediaStructures);
 
 /**
  * OAuth authentication routes. (Sign in)

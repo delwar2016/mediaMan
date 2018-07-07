@@ -1,0 +1,28 @@
+extends layout
+
+block content
+
+  h1 Media Home
+  hr
+  .row
+    .col-md-12
+        div(id="video-container", style="display: none;")
+            a(class="easyui-linkbutton" onclick="closedVideo()") Close
+            video(id="my-player" class="video-js" width="800" height="500" controls)
+        div(id="directories-container")
+            p.lead All you will get from here
+            table(
+              title="Folder Browser"
+              class="easyui-treegrid"
+              data-options="" +
+              "url: '/api/fileStorage', " +
+              "method: 'get', " +
+              "rownumbers: true, " +
+              "idField: 'name', " +
+              "treeField: 'name'"
+              )
+               thead
+                tr
+                 th(data-options="field:'name', formatter:formatLink" width="220") Name
+                 th(data-options="field:'size'" width="100" align="right")
+                  th(data-options="field:'type'" width="100")
