@@ -1,28 +1,31 @@
+var replacePath = '';
 $(document).ready(() => {
-  $( document ).on( 'click', '.play-video',function (e) {
+  $.get('/api/getDirectoryPath', function (responsePath) {
+    replacePath = responsePath.replace('./', '');
+  })
+  $(document).on('click', '.play-video', function (e) {
     $('#directories-container').hide();
-    var videoPath = $(this).attr('video-path');
+    var tmpVideoPath = $(this).attr('video-path');
+    tmpVideoPath = tmpVideoPath.replace(replacePath, '');
     var myVideo = videojs('my-player');
     myVideo.src([
-      {src: videoPath, type: 'video/mp4'}
+      { src: tmpVideoPath, type: 'video/mp4' }
     ]);
     $('#video-container').show();
   });
 });
 function formatLink(value, item) {
   if (value) {
-    return '<a class="play-video" video-path="'+ item.path.replace('public', '') +'" target="_blank">'+ value +'</a>'
-  } else {
-    return '';
+    return `<a class="play-video" video-path="${item.path}" target="_blank">${value}</a>`;
   }
+  return '';
 }
 
 var myVideo = document.getElementById('my-player');
 try {
-  myVideo.addEventListener('ended', function (e) {
+  myVideo.addEventListener('ended', (e) => {
     $('#directories-container').show();
     $('#video-container').hide();
-
   });
 } catch (e) {
   console.log(e);
